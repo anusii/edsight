@@ -5,11 +5,11 @@ Student Education Insights
 ## Data Extract
 
 ```bash
-extract mcomp > mcomp.csv
+python extract.py mcomp > mcomp.csv
 ```
 
 ```console
-$ extract mcomp
+$ python extract.py mcomp
 uid,course
 u1234567,comp1234
 u1234567,comp2345
@@ -23,11 +23,11 @@ u1234568,comp4567
 ## Analysis
 
 ```bash
-baskets mcomp.csv > baskets.csv
+python baskets.py mcomp.csv > baskets.csv
 ```
 
 ```console
-$ baskets mcopm.csv
+$ python baskets.py mcopm.csv
 freq,support,pattern
 145,0.75,comp1234:comp4567
 123,0.45,comp2345
@@ -35,7 +35,7 @@ freq,support,pattern
 ```
 
 ```console
-$ baskets --support=0.5 mcomp.csv
+$ python baskets.py --support=0.5 mcomp.csv
 freq,support,pattern
 145,0.75,comp1234:comp4567
 ...
@@ -44,5 +44,5 @@ freq,support,pattern
 ## Pipeline
 
 ```bash
-extract mcomp | baskets > baskets.csv
+python extract.py mcomp | python -s 0.5 baskets.py > top_baskets_0.5.csv
 ```
