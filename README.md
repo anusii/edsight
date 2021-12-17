@@ -28,16 +28,16 @@ python baskets.py mcomp.csv > baskets.csv
 
 ```console
 $ python baskets.py mcopm.csv
-freq,support,pattern
-145,0.75,comp1234:comp4567
-123,0.45,comp2345
+pattern,freq,support
+comp1234:comp4567,145,0.75
+comp2345,123,0.45
 ...
 ```
 
 ```console
 $ python baskets.py --support=0.5 mcomp.csv
-freq,support,pattern
-145,0.75,comp1234:comp4567
+pattern,freq,support
+comp1234:comp4567,145,0.75
 ...
 ```
 
