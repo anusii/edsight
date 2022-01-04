@@ -46,3 +46,12 @@ comp1234:comp4567,145,0.75
 ```bash
 python extract.py mcomp | python -s 0.5 baskets.py > top_baskets_0.5.csv
 ```
+
+# Test Server
+
+```
+globalprotect connect
+ssh u1234567@sii-ftest.cecs.anu.edu.au 
+...
+globalprotect disconnect
+```
