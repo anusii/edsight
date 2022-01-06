@@ -18,16 +18,21 @@ parser <- add_argument(parser, "--id",
                        default = "id",
                        type = "character")
 parser <- add_argument(parser, "--support",
-                       help = "The support of Apriori algorithm",
+                       help = "The support for the Apriori algorithm",
                        default = 0.1,
                        type = "double",
                        short = "-s")
+parser <- add_argument(parser, "--confidence",
+                       help = "The confidence for the Apriori algorithm",
+                       default = 0.1,
+                       type = "double",
+                       short = "-c")
+parser <- add_argument(parser, "--output",
+                       help = "CSV file to write the association rules",
+                       default = "",
+                       type = "character",
+                       short = "-o")
 argv <- parse_args(parser)
-
-# if (is.na(argv$datafile)) {
-#     print(parser)
-#     stop("No CSV data file provided\n", call. = FALSE)
-# }
 
 dataset <- read.csv(argv$datafile,
                     na.strings = c(".", "NA", "", "?"),
@@ -51,13 +56,8 @@ as(split(df[, 2], df[, 1]), "transactions") %>%
                 support = argv$support,
                 confidence = argv$confidence,
                 minlen = 2,
-                target = "frequent itemsets"),
+                target = "rules"),
             control = list(verbose = FALSE)
     ) %>%
     sort(by = "support") %>%
-    as("data.frame") %>%
-    rename(
-        pattern = items,
-        freq = count
-    ) %>%
-    select(pattern, freq, support)
+    as("data.frame")
