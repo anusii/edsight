@@ -15,10 +15,16 @@
   ```
   where `7705` is the degree identifier for "Master of Computing"
 
-- Simple basket analysis
+- Simple basket analysis 
 
   ```bash
   ./baskets.R --id uid mcomp.csv
   ```
-  
+
+- Association rules mining
+
+  ```bash
+  ./train.R --id uid mcomp.csv
+  ```
+
 Noting that `/mnt/edsight` on `sii-ftest` is a common place for sharing files.
