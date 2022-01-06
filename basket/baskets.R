@@ -5,6 +5,7 @@ suppressPackageStartupMessages({
     library(arules)
     library(argparser)
     library(glue)
+    library(fs)
 })
 
 
@@ -29,9 +30,15 @@ argv <- parse_args(parser)
 #     stop("No CSV data file provided\n", call. = FALSE)
 # }
 
-dataset <- read.csv(argv$datafile,
-                    na.strings = c(".", "NA", "", "?"),
-                    strip.white = TRUE, encoding = "UTF-8")
+ifelse(file.exists(argv$datafile),
+       argv$datafile,
+       path_expand(glue('~/.mlhub/edsight/{argv$datafile}'))
+    ) %>%
+    read.csv(na.strings = c(".", "NA", "", "?"),
+             strip.white = TRUE,
+             encoding = "UTF-8"
+    ) ->
+dataset
 
 if (!(argv$id %in% colnames(dataset))) {
     msg = glue("A basket identifier '{argv$id}' ",
