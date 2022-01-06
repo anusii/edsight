@@ -28,7 +28,7 @@ parser <- add_argument(parser, "--confidence",
                        type = "double",
                        short = "-c")
 parser <- add_argument(parser, "--output",
-                       help = "CSV file to write the association rules",
+                       help = "CSV file to write the association rules (default to console)",
                        default = "",
                        type = "character",
                        short = "-o")
@@ -60,4 +60,5 @@ as(split(df[, 2], df[, 1]), "transactions") %>%
             control = list(verbose = FALSE)
     ) %>%
     sort(by = "support") %>%
-    as("data.frame")
+    as("data.frame") %>%
+    write.csv(argv$output, row.names = FALSE)

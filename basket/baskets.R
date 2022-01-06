@@ -60,4 +60,5 @@ as(split(df[, 2], df[, 1]), "transactions") %>%
         pattern = items,
         freq = count
     ) %>%
-    select(pattern, freq, support)
+    select(pattern, freq, support) %>%
+    write.csv(row.names = FALSE)
