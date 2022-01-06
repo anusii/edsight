@@ -3,7 +3,7 @@ meta:
   name         : edsight
   title        : A simple example of the meta data for a MLHub pacakge.
   keywords     : r, association rules, basket analysis
-  version      : 0.0.1
+  version      : 0.1.1
   languages    : R
   license      : gpl3
   author       : Graham.Williams@togaware.com
@@ -16,7 +16,9 @@ dependencies:
   files:
     - README.md
     - demo.R
-    - basket/baskets.R
+    - basket/itemsets.R
+    - basket/train.R
 commands:
-  demo : Demonstrate the model capabilities in one easy session.
-  baskets : Identify frequent basket item combinations. 
+  demo: Demonstrate the model capabilities in one easy session.
+  itemsets: Identify frequent basket item combinations. 
+  train: Construct association rules from basket dataset.
