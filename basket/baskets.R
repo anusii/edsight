@@ -48,6 +48,7 @@ as(split(df[, 2], df[, 1]), "transactions") %>%
                 target = "frequent itemsets"),
             control = list(verbose = FALSE)
     ) %>%
+    sort(by = "support") %>%
     as("data.frame") %>%
     rename(
         pattern = items,
