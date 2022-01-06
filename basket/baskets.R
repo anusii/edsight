@@ -4,6 +4,7 @@
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(arules))
 suppressPackageStartupMessages(library(argparser))
+suppressPackageStartupMessages(library(glue))
 
 
 parser <- arg_parser("Simple basket analysis")
@@ -32,11 +33,17 @@ dataset <- read.csv(argv$datafile,
                     strip.white = TRUE, encoding = "UTF-8")
 
 if (!(argv$id %in% colnames(dataset))) {
-    print(parser)
-    stop(sprintf(fmt="The identification variable \"%s\" does not exist in the dataset\n", argv$id), call. = FALSE)
+  msg = glue("A basket identifier '{argv$id}' ",
+             "was not found amongst the columns: ",
+             "{paste(names(dataset), collapse=', ')}.\n",
+             "      Use '--id=' to identify the identifier.")
+  stop(msg, call. = FALSE)
 }
 
-dataset %>% rename(id=argv$id) %>% select(id, everything()) -> df
+dataset %>%
+  rename(id=argv$id) %>%
+  select(id, everything()) ->
+df
 
 transactions <- as(split(df[, 2], df[, 1]), "transactions")
 
