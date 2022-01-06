@@ -18,7 +18,7 @@
 - Simple basket analysis 
 
   ```bash
-  ./baskets.R --id uid mcomp.csv
+  ./itemsets.R --id uid mcomp.csv
   ```
 
 - Association rules mining
