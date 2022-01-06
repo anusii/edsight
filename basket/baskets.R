@@ -1,10 +1,11 @@
 #!/usr/bin/env Rscript
 
-# library(tidyverse, quietly = TRUE)
-suppressPackageStartupMessages(library(dplyr))
-suppressPackageStartupMessages(library(arules))
-suppressPackageStartupMessages(library(argparser))
-suppressPackageStartupMessages(library(glue))
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(arules)
+  library(argparser)
+  library(glue)
+})
 
 
 parser <- arg_parser("Simple basket analysis")
