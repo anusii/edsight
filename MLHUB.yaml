@@ -1,6 +1,6 @@
 --- # Association Rules for Educational Insights.
 meta:
-  name         : edsight
+  name         : apriori
   title        : A simple example of the meta data for a MLHub pacakge.
   keywords     : r, association rules, basket analysis
   version      : 0.0.1
