@@ -3,7 +3,7 @@ meta:
   name         : edsight
   title        : A simple example of the meta data for a MLHub pacakge.
   keywords     : r, association rules, basket analysis
-  version      : 0.1.1
+  version      : 0.1.2
   languages    : R
   license      : gpl3
   author       : Graham.Williams@togaware.com
