@@ -8,7 +8,7 @@ suppressPackageStartupMessages({
     library(mlhub)
 })
 
-setwd(mlcwd())
+setwd(get_cmd_cwd())
 
 parser <- arg_parser("Simple basket analysis")
 parser <- add_argument(parser, "datafile",
