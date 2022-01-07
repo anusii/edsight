@@ -5,8 +5,10 @@ suppressPackageStartupMessages({
     library(arules)
     library(argparser)
     library(glue)
+    library(mlhub)
 })
 
+setwd(mlcwd())
 
 parser <- arg_parser("Simple basket analysis")
 parser <- add_argument(parser, "datafile",
