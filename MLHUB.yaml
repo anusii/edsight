@@ -1,12 +1,12 @@
 --- # Association Rules for Educational Insights.
 meta:
   name         : edsight
-  title        : A simple example of the meta data for a MLHub pacakge.
-  keywords     : r, association rules, basket analysis
+  title        : Apriori association analysis as deployed for education insights.
+  keywords     : r, association rules, basket analysis, apriori, item sets 
   version      : 0.1.2
   languages    : R
   license      : gpl3
-  author       : Graham.Williams@togaware.com
+  author       : Dawei Chen, Graham.Williams@togaware.com
   url          : https://github.com/anusii/edsight
 dependencies:
   cran:
