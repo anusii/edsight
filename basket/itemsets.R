@@ -3,35 +3,47 @@
 suppressPackageStartupMessages({
     library(dplyr)
     library(arules)
-    library(argparser)
+    library(optparse)
     library(glue)
     library(mlhub)
 })
 
 setwd(get_cmd_cwd())
 
-parser <- arg_parser("Simple basket analysis")
-parser <- add_argument(parser, "datafile",
-                       help = "CSV data filename",
-                       default = NULL,
-                       type = "character")
-parser <- add_argument(parser, "--id",
-                       help = "The name of identification variable",
-                       default = "id",
-                       type = "character")
-parser <- add_argument(parser, "--support",
-                       help = "The support of Apriori algorithm",
-                       default = 0.1,
-                       type = "double",
-                       short = "-s")
+parser <- OptionParser()
+parser <- add_option(parser,
+                     c("-f", "--datafile"),
+                     action = "store",
+                     default = "stdin",
+                     help = "CSV data file [default: standard input]",
+                     type = "character")
+parser <- add_option(parser,
+                     c("-o", "--outputfile"),
+                     action = "store",
+                     default = "",
+                     help = "CSV file to write the output [default: standard output]",
+                     type = "character")
+parser <- add_option(parser,
+                     "--id",
+                     action = "store",
+                     default = "id",
+                     help = "The basket identification variable/column [default: %default]",
+                     type = "character")
+parser <- add_option(parser,
+                     c("-s", "--support"),
+                     action = "store",
+                     default = 0.1,
+                     help = "The support for the Apriori algorithm [default: %default]",
+                     type = "double")
+parser <- add_option(parser,
+                     c("-c", "--confidence"),
+                     action = "store",
+                     default = 0.1,
+                     help = "The confidence for the Apriori algorithm [default: %default]",
+                     type = "double")
 argv <- parse_args(parser)
 
-# if (is.na(argv$datafile)) {
-#     print(parser)
-#     stop("No CSV data file provided\n", call. = FALSE)
-# }
-
-dataset <- read.csv(argv$datafile,
+dataset <- read.csv(file(argv$datafile),  # file() is necessary to read from stdin
                     na.strings = c(".", "NA", "", "?"),
                     strip.white = TRUE, encoding = "UTF-8")
 
@@ -39,7 +51,7 @@ if (!(argv$id %in% colnames(dataset))) {
     msg = glue("A basket identifier '{argv$id}' ",
                "was not found amongst the columns: ",
                "{paste(names(dataset), collapse=', ')}.\n",
-               "      Use '--id <column>' to specify the identifier.")
+               "      Use '--id=<column>' to specify the identifier.")
     stop(msg, call. = FALSE)
 }
 
@@ -63,4 +75,4 @@ as(split(df[, 2], df[, 1]), "transactions") %>%
         freq = count
     ) %>%
     select(pattern, freq, support) %>%
-    write.csv(row.names = FALSE)
+    write.csv(argv$outputfile, row.names = FALSE)

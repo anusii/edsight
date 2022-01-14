@@ -2,23 +2,43 @@
 
 ### How to run the scripts
 - Login `sii-ftest`
-- Install R packages `arules`, `tidyverse` and `argparser`. If using R-3.6, `arules` can be installed by command
+- Install R packages `arules`, `tidyverse` and `optparse`. If using R-3.6, `arules` can be installed by command
 
   ```console
   install.packages("https://cran.r-project.org/src/contrib/Archive/arules/arules_1.6-8.tar.gz")
   ```
 
+- [Install `mlhub` R package](https://survivor.togaware.com/mlhub/installing-mlhub.html)
+
 - Extract data from postgreSQL
 
   ```bash
-  ./extract.sh 7705 > mcomp.csv
+  ./extract.sh 7705 > mcomp_fais.csv
   ```
   where `7705` is the degree identifier for "Master of Computing"
 
 - Simple basket analysis
 
   ```bash
-  ./baskets.R --id uid mcomp.csv
+  ./itemsets.R --id=uid -f mcomp_fais.csv
   ```
+  or
   
-Noting that `/mnt/edsight` on `sii-ftest` is a common place for sharing files.
+  ```bash
+  cat mcomp_fais.csv | ./itemsets.R --id=uid
+  ```
+  See `./itemsets.R --help` for details of supported options.
+  
+- Association rules using dummy data `mcomp.csv`
+
+  ```bash
+  ./train.R -f mcomp.csv
+  ```
+  or
+  
+  ```bash
+  cat mcomp.csv | ./train.R
+  ```
+    See `./train.R --help` for details of supported options.
+
+Noting that `mcomp_fais.csv` can be found in `/mnt/edsight` on `sii-ftest`.
