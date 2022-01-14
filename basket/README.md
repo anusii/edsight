@@ -2,11 +2,13 @@
 
 ### How to run the scripts
 - Login `sii-ftest`
-- Install R packages `arules`, `tidyverse` and `argparser`. If using R-3.6, `arules` can be installed by command
+- Install R packages `arules`, `tidyverse` and `optparse`. If using R-3.6, `arules` can be installed by command
 
   ```console
   install.packages("https://cran.r-project.org/src/contrib/Archive/arules/arules_1.6-8.tar.gz")
   ```
+
+- [Install `mlhub` R package](https://survivor.togaware.com/mlhub/installing-mlhub.html)
 
 - Extract data from postgreSQL
 
