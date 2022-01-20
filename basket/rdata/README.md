@@ -12,9 +12,9 @@ Association rules data found by `train.R`:
 - `MADAN_arules.rds`: 227 association rules for MADAN
 - `MComp_arules.rds`: 1928 association rules for MComp
 
-To load the data, use the `readRDS` function in R, e.g.,
+To load the data in R, use the `readRDS` function, e.g.,
 
 ```console
 GCDE_itemsets <- readRDS("GCDE_itemsets.rds")
-inspect(GCDE_itemsets)
+inspect(GCDE_itemsets)  # display the itemsets
 ```
