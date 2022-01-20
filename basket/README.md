@@ -27,7 +27,7 @@
   ```bash
   cat mcomp_fais.csv | ./itemsets.R --id=uid
   ```
-  See `./itemsets.R --help` for details of supported options.
+  See `./itemsets.R --help` for details of supported options. The frequent items for MComp, GCDE and MADAN can be found in `rds/`.
   
 - Association rules using dummy data `mcomp.csv`
 
@@ -39,6 +39,6 @@
   ```bash
   cat mcomp.csv | ./train.R
   ```
-    See `./train.R --help` for details of supported options.
+    See `./train.R --help` for details of supported options. The association rules for MComp, GCDE and MADAN can be found in `rds/`.
 
 Noting that `mcomp_fais.csv` can be found in `/mnt/edsight` on `sii-ftest`.
