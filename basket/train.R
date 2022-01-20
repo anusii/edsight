@@ -18,10 +18,16 @@ parser <- add_option(parser,
                      help = "CSV data file [default: standard input]",
                      type = "character")
 parser <- add_option(parser,
+                     c("-b", "--binaryfile"),
+                     action = "store",
+                     default = NULL,
+                     help = "Name of binary file to save the association rules [default: %default]",
+                     type = "character")
+parser <- add_option(parser,
                      c("-o", "--outputfile"),
                      action = "store",
                      default = "",
-                     help = "CSV file to write the output [default: standard output]",
+                     help = "CSV file to write the association rules, ignored if --binaryfile is set [default: standard output]",
                      type = "character")
 parser <- add_option(parser,
                      "--id",
@@ -42,6 +48,10 @@ parser <- add_option(parser,
                      help = "The confidence for the Apriori algorithm [default: %default]",
                      type = "double")
 argv <- parse_args(parser)
+
+if (!is.null(argv$binaryfile) && argv$outputfile != "") {
+    print(glue("WARN: --outputfile={argv$outputfile} is ignored"))
+}
 
 dataset <- read.csv(file(argv$datafile),  # file() is necessary to read from stdin
                     na.strings = c(".", "NA", "", "?"),
@@ -68,6 +78,24 @@ as(split(df[, 2], df[, 1]), "transactions") %>%
                 target = "rules"),
             control = list(verbose = FALSE)
     ) %>%
-    sort(by = "support") %>%
-    as("data.frame") %>%
-    write.csv(argv$outputfile, row.names = FALSE)
+    sort(by = "support") ->
+all_rules
+
+if (!is.null(argv$binaryfile)) {
+    ifelse(
+        endsWith(argv$binaryfile, '.rds'),
+        argv$binaryfile,
+        paste0(argv$binaryfile, '.rds')
+    ) ->
+    fout
+    saveRDS(all_rules, fout)
+} else {
+    fout <- argv$outputfile
+    all_rules %>%
+        as("data.frame") %>%
+        write.csv(fout, row.names = FALSE)
+}
+
+if (!is.null(argv$binaryfile) || argv$outputfile != "") {
+    print(glue("{length(all_rules)} association rules saved to {fout}"))
+}
