@@ -18,3 +18,8 @@ To load the data in R, use the `readRDS` function, e.g.,
 GCDE_itemsets <- readRDS("GCDE_itemsets.rds")
 inspect(GCDE_itemsets)  # display the itemsets
 ```
+
+NOTE:
+
+- Please ignore the *transIdenticalToItemsets* column in the itemsets, see [this arules issue](https://github.com/mhahsler/arules/issues/67)
+- The [jsonlite](https://github.com/jeroen/jsonlite) R package might be helpful if JSON format is preferred, e.g., using the [serializeJSON](https://www.rdocumentation.org/packages/jsonlite/versions/1.7.3/topics/serializeJSON) function
