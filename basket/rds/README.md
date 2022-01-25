@@ -2,12 +2,14 @@
 
 Frequent itemsets data found by `itemsets.R`:
 
+- `GCADAN_itemsets.rds`: 2 frequent itemsets for GCADAN
 - `GCDE_itemsets.rds`: 12 frequent itemsets for GCDE
 - `MADAN_itemsets.rds`: 78 frequent itemsets for MADAN
 - `MComp_itemsets.rds`: 628 frequent itemsets for MComp
 
 Association rules data found by `train.R`:
 
+- `GCADAN_arules.rds`: 4 association rules for GCADAN
 - `GCDE_arules.rds`: 30 association rules for GCDE
 - `MADAN_arules.rds`: 227 association rules for MADAN
 - `MComp_arules.rds`: 1928 association rules for MComp
