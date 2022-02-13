@@ -41,4 +41,16 @@
   ```
     See `./train.R --help` for details of supported options. The association rules for MComp, GCDE and MADAN can be found in `rds/`.
 
+- Simple visualisation of association rules
+
+  ```bash
+  ./visualise.R -f mcomp.csv
+  ```
+  or
+  
+  ```bash
+  cat mcomp.csv | ./visualise.R
+    which saves the visualisation of rules in file `Rplots.pdf` in the current working directory.
+ 
+
 Noting that `mcomp_fais.csv` can be found in `/mnt/edsight` on `sii-ftest`.
