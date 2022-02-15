@@ -6,6 +6,7 @@ suppressPackageStartupMessages({
     library(optparse)
     library(glue)
     library(mlhub)
+    library(tools)
 })
 
 setwd(get_cmd_cwd())
@@ -15,19 +16,13 @@ parser <- add_option(parser,
                      c("-i", "--input"),
                      action = "store",
                      default = "stdin",
-                     help = "CSV data file [default: standard input]",
+                     help = "Input CSV data file [default: %default]",
                      type = "character")
 parser <- add_option(parser,
-                     c("-b", "--binaryfile"),
+                     c("-o", "--output"),
                      action = "store",
-                     default = NULL,
-                     help = "Name of binary file to save the frequent itemsets [default: %default]",
-                     type = "character")
-parser <- add_option(parser,
-                     c("-o", "--outputfile"),
-                     action = "store",
-                     default = "",
-                     help = "CSV file to write the frequent itemsets, ignored if --binaryfile is set [default: standard output]",
+                     default = "stdout",
+                     help = "Output frequent itemsets file (.csv or .rds) [default: %default]",
                      type = "character")
 parser <- add_option(parser,
                      "--id",
@@ -55,9 +50,13 @@ if (length(argv$args)) {
   argv$options$input = argv$args[1]
 }
 
-if (!is.null(argv$options$binaryfile) && argv$options$outputfile != "") {
-    print(glue("WARN: --outputfile={argv$options$outputfile} is ignored"))
-}
+fext = ifelse(argv$options$output == "stdout",
+              "stdout",
+              file_ext(argv$options$output))
+
+if (! fext %in% c("stdout", "csv", "rds"))
+  stop(glue("file extension expected as either 'csv' or 'rds' ",
+            "found '{fext}'."))
 
 dataset <- read.csv(file(argv$options$input),  # file() is necessary to read from stdin
                     na.strings = c(".", "NA", "", "?"),
@@ -87,26 +86,16 @@ as(split(df[, 2], df[, 1]), "transactions") %>%
     sort(by = "support") ->
 itemsets
 
-if (!is.null(argv$options$binaryfile)) {
-    ifelse(
-        endsWith(argv$options$binaryfile, '.rds'),
-        argv$options$binaryfile,
-        paste0(argv$options$binaryfile, '.rds')
-    ) ->
-    fout
-    saveRDS(itemsets, fout)
+if (fext == "rds") {
+  saveRDS(itemsets, argv$options$output)
 } else {
-    fout <- argv$options$outputfile
-    itemsets %>%
-        as("data.frame") %>%
-        rename(
-            pattern = items,
-            freq = count
-        ) %>%
-        select(pattern, freq, support) %>%
-        write.csv(fout, row.names = FALSE)
-}
-
-if (!is.null(argv$options$binaryfile) || argv$options$outputfile != "") {
-    print(glue("{length(itemsets)} frequent itemsets saved to {fout}"))
+  itemsets %>%
+    as("data.frame") %>%
+    rename(pattern=items, freq=count) %>%
+    select(pattern, freq, support) ->
+  df
+  if (fext == "csv")
+    write.csv(df, argv$options$output, row.names=FALSE)
+  else
+    write.csv(df, "", row.names=FALSE)
 }
