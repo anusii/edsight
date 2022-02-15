@@ -47,18 +47,24 @@ parser <- add_option(parser,
                      default = 0.1,
                      help = "The confidence for the Apriori algorithm [default: %default]",
                      type = "double")
-argv <- parse_args(parser)
+argv <- parse_args(parser, positional_arguments=TRUE)
 
-if (!is.null(argv$binaryfile) && argv$outputfile != "") {
-    print(glue("WARN: --outputfile={argv$outputfile} is ignored"))
+# Handle positional argument - input filename
+
+if (length(argv$args)) {
+  argv$options$datafile = argv$args[1]
 }
 
-dataset <- read.csv(file(argv$datafile),  # file() is necessary to read from stdin
+if (!is.null(argv$options$binaryfile) && argv$options$outputfile != "") {
+    print(glue("WARN: --outputfile={argv$options$outputfile} is ignored"))
+}
+
+dataset <- read.csv(file(argv$options$datafile),  # file() is necessary to read from stdin
                     na.strings = c(".", "NA", "", "?"),
                     strip.white = TRUE, encoding = "UTF-8")
 
-if (!(argv$id %in% colnames(dataset))) {
-    msg = glue("A basket identifier '{argv$id}' ",
+if (!(argv$options$id %in% colnames(dataset))) {
+    msg = glue("A basket identifier '{argv$options$id}' ",
                "was not found amongst the columns: ",
                "{paste(names(dataset), collapse=', ')}.\n",
                "      Use '--id=<column>' to specify the identifier.")
@@ -66,14 +72,14 @@ if (!(argv$id %in% colnames(dataset))) {
 }
 
 dataset %>% 
-    rename(id=argv$id) %>% 
+    rename(id=argv$options$id) %>% 
     select(id, everything()) -> 
 df
 
 as(split(df[, 2], df[, 1]), "transactions") %>%
     apriori(parameter = list(
-                support = argv$support,
-                confidence = argv$confidence,
+                support = argv$options$support,
+                confidence = argv$options$confidence,
                 minlen = 2,
                 target = "frequent itemsets"),
             control = list(verbose = FALSE)
@@ -81,16 +87,16 @@ as(split(df[, 2], df[, 1]), "transactions") %>%
     sort(by = "support") ->
 itemsets
 
-if (!is.null(argv$binaryfile)) {
+if (!is.null(argv$options$binaryfile)) {
     ifelse(
-        endsWith(argv$binaryfile, '.rds'),
-        argv$binaryfile,
-        paste0(argv$binaryfile, '.rds')
+        endsWith(argv$options$binaryfile, '.rds'),
+        argv$options$binaryfile,
+        paste0(argv$options$binaryfile, '.rds')
     ) ->
     fout
     saveRDS(itemsets, fout)
 } else {
-    fout <- argv$outputfile
+    fout <- argv$options$outputfile
     itemsets %>%
         as("data.frame") %>%
         rename(
@@ -101,6 +107,6 @@ if (!is.null(argv$binaryfile)) {
         write.csv(fout, row.names = FALSE)
 }
 
-if (!is.null(argv$binaryfile) || argv$outputfile != "") {
+if (!is.null(argv$options$binaryfile) || argv$options$outputfile != "") {
     print(glue("{length(itemsets)} frequent itemsets saved to {fout}"))
 }
