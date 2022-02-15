@@ -36,12 +36,6 @@ parser <- add_option(parser,
                      default = 0.1,
                      help = "The support for the Apriori algorithm [default: %default]",
                      type = "double")
-parser <- add_option(parser,
-                     c("-c", "--confidence"),
-                     action = "store",
-                     default = 0.1,
-                     help = "The confidence for the Apriori algorithm [default: %default]",
-                     type = "double")
 argv <- parse_args(parser, positional_arguments=TRUE)
 
 # Handle positional argument - input filename
@@ -78,7 +72,6 @@ df
 as(split(df[, 2], df[, 1]), "transactions") %>%
     apriori(parameter = list(
                 support = argv$options$support,
-                confidence = argv$options$confidence,
                 minlen = 2,
                 target = "frequent itemsets"),
             control = list(verbose = FALSE)
