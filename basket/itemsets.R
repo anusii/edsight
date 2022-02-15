@@ -12,7 +12,7 @@ setwd(get_cmd_cwd())
 
 parser <- OptionParser()
 parser <- add_option(parser,
-                     c("-f", "--datafile"),
+                     c("-i", "--input"),
                      action = "store",
                      default = "stdin",
                      help = "CSV data file [default: standard input]",
@@ -52,14 +52,14 @@ argv <- parse_args(parser, positional_arguments=TRUE)
 # Handle positional argument - input filename
 
 if (length(argv$args)) {
-  argv$options$datafile = argv$args[1]
+  argv$options$input = argv$args[1]
 }
 
 if (!is.null(argv$options$binaryfile) && argv$options$outputfile != "") {
     print(glue("WARN: --outputfile={argv$options$outputfile} is ignored"))
 }
 
-dataset <- read.csv(file(argv$options$datafile),  # file() is necessary to read from stdin
+dataset <- read.csv(file(argv$options$input),  # file() is necessary to read from stdin
                     na.strings = c(".", "NA", "", "?"),
                     strip.white = TRUE, encoding = "UTF-8")
 
