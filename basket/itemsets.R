@@ -34,19 +34,11 @@ argv <- parse_args(parser, positional_arguments=TRUE)
 
 # Handle positional argument - input filename
 
-input <- ifelse(length(argv$args),
-                argv$args[1],
-                "stdin")
-
+input  <- ifelse(length(argv$args), argv$args[1], "stdin")
 output <- argv$options$output
-
-fext <- ifelse(output == "stdout",
-               "stdout",
-               file_ext(output))
-
-ident <- argv$options$id
-
-threshold <- argv$options$support
+fext   <- ifelse(output == "stdout", "stdout", file_ext(output))
+ident  <- argv$options$id
+supp   <- argv$options$support
 
 if (! fext %in% c("stdout", "csv", "rds"))
   stop(glue("file extension expected as either 'csv' or 'rds' ",
@@ -71,7 +63,7 @@ df
 
 as(split(df[, 2], df[, 1]), "transactions") %>%
     apriori(parameter = list(
-                support = threshold,
+                support = supp,
                 minlen = 2,
                 target = "frequent itemsets"),
             control = list(verbose = FALSE)
