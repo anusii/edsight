@@ -6,28 +6,17 @@ suppressPackageStartupMessages({
     library(optparse)
     library(glue)
     library(mlhub)
+    library(tools)
 })
 
 setwd(get_cmd_cwd())
 
 parser <- OptionParser()
 parser <- add_option(parser,
-                     c("-f", "--datafile"),
+                     c("-o", "--output"),
                      action = "store",
-                     default = "stdin",
-                     help = "CSV data file [default: standard input]",
-                     type = "character")
-parser <- add_option(parser,
-                     c("-b", "--binaryfile"),
-                     action = "store",
-                     default = NULL,
-                     help = "Name of binary file to save the association rules [default: %default]",
-                     type = "character")
-parser <- add_option(parser,
-                     c("-o", "--outputfile"),
-                     action = "store",
-                     default = "",
-                     help = "CSV file to write the association rules, ignored if --binaryfile is set [default: standard output]",
+                     default = "stdout",
+                     help = "Output association rules(.csv or .rds)  [default: %default]",
                      type = "character")
 parser <- add_option(parser,
                      "--id",
@@ -47,17 +36,26 @@ parser <- add_option(parser,
                      default = 0.1,
                      help = "The confidence for the Apriori algorithm [default: %default]",
                      type = "double")
-argv <- parse_args(parser)
+argv <- parse_args(parser, positional_arguments=TRUE)
 
-if (!is.null(argv$binaryfile) && argv$outputfile != "") {
-    print(glue("WARN: --outputfile={argv$outputfile} is ignored"))
-}
+# Handle argument.
 
-dataset <- read.csv(file(argv$datafile),  # file() is necessary to read from stdin
+input  <- ifelse(length(argv$args), argv$args[1], "stdin")
+output <- argv$options$output
+fext   <- ifelse(output == "stdout", "stdout", file_ext(output))
+ident  <- argv$options$id
+supp   <- argv$options$support
+conf   <- argv$options$confidence
+
+if (! fext %in% c("stdout", "csv", "rds"))
+  stop(glue("file extension expected as either 'csv' or 'rds' ",
+            "found '{fext}'."))
+
+dataset <- read.csv(file(input),  # file() is necessary to read from stdin
                     na.strings = c(".", "NA", "", "?"),
                     strip.white = TRUE, encoding = "UTF-8")
 
-if (!(argv$id %in% colnames(dataset))) {
+if (!(ident %in% colnames(dataset))) {
     msg = glue("A basket identifier '{argv$id}' ",
                "was not found amongst the columns: ",
                "{paste(names(dataset), collapse=', ')}.\n",
@@ -66,14 +64,14 @@ if (!(argv$id %in% colnames(dataset))) {
 }
 
 dataset %>% 
-    rename(id=argv$id) %>% 
+    rename(id=!!ident) %>% 
     select(id, everything()) -> 
 df
 
 as(split(df[, 2], df[, 1]), "transactions") %>%
     apriori(parameter = list(
-                support = argv$support,
-                confidence = argv$confidence,
+                support = supp,
+                confidence = conf,
                 minlen = 2,
                 target = "rules"),
             control = list(verbose = FALSE)
@@ -81,21 +79,14 @@ as(split(df[, 2], df[, 1]), "transactions") %>%
     sort(by = "support") ->
 all_rules
 
-if (!is.null(argv$binaryfile)) {
-    ifelse(
-        endsWith(argv$binaryfile, '.rds'),
-        argv$binaryfile,
-        paste0(argv$binaryfile, '.rds')
-    ) ->
-    fout
-    saveRDS(all_rules, fout)
+if (fext == "rds") {
+  saveRDS(all_rules, output)
 } else {
-    fout <- argv$outputfile
-    all_rules %>%
-        as("data.frame") %>%
-        write.csv(fout, row.names = FALSE)
-}
-
-if (!is.null(argv$binaryfile) || argv$outputfile != "") {
-    print(glue("{length(all_rules)} association rules saved to {fout}"))
+  all_rules %>%
+    as("data.frame") ->
+  df
+  if (fext == "csv")
+    write.csv(df, output, row.names=FALSE)
+  else
+    write.csv(df, "", row.names=FALSE)
 }
