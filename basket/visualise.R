@@ -17,11 +17,12 @@ parser <- OptionParser()
 argv <- parse_args(parser, positional_arguments=TRUE)
 
 if (length(argv$args) != 1)
-  stop("Exactly on argument is required: rds filename containin model")
+  stop("Exactly one argument is required: rds filename of model.")
 
-input  <- argv$args[1]
+input <- argv$args[1]
 
-readRDS(input) %>%
+input %>%
+  readRDS() %>%
   sort(by = "support") ->
 subrules
 
