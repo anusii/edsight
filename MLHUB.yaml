@@ -3,7 +3,7 @@ meta:
   name         : edsight
   title        : Apriori association analysis as deployed for education insights.
   keywords     : r, association rules, basket analysis, apriori, item sets 
-  version      : 0.2.3
+  version      : 0.2.4
   languages    : R
   license      : gpl3
   author       : Dawei Chen, Graham.Williams@togaware.com
